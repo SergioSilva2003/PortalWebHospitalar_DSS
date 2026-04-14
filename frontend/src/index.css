@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 209 100% 36%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 25% 95%;
+    --secondary-foreground: 215 25% 15%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 15% 50%;
+
+    --accent: 168 60% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 209 100% 36%;
+
+    --radius: 0.625rem;
+
+    --clinical-blue: 209 100% 36%;
+    --clinical-blue-light: 209 80% 95%;
+    --clinical-green: 168 60% 42%;
+    --clinical-green-light: 168 40% 94%;
+    --clinical-amber: 38 92% 50%;
+    --clinical-amber-light: 38 80% 95%;
+    --clinical-red: 0 72% 51%;
+    --clinical-red-light: 0 60% 96%;
+    --clinical-gray: 215 15% 50%;
+    --clinical-gray-light: 210 20% 96%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 215 25% 15%;
+    --sidebar-primary: 209 100% 36%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 25% 95%;
+    --sidebar-accent-foreground: 215 25% 15%;
+    --sidebar-border: 214 20% 90%;
+    --sidebar-ring: 209 100% 36%;
+  }
+
+  .dark {
+    --background: 215 28% 8%;
+    --foreground: 210 20% 96%;
+    --card: 215 25% 11%;
+    --card-foreground: 210 20% 96%;
+    --popover: 215 25% 11%;
+    --popover-foreground: 210 20% 96%;
+    --primary: 209 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 20% 18%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 215 20% 18%;
+    --muted-foreground: 215 15% 60%;
+    --accent: 168 50% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 20% 96%;
+    --border: 215 20% 20%;
+    --input: 215 20% 20%;
+    --ring: 209 90% 50%;
+    --sidebar-background: 215 25% 11%;
+    --sidebar-foreground: 210 20% 96%;
+    --sidebar-primary: 209 90% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 20% 18%;
+    --sidebar-accent-foreground: 210 20% 96%;
+    --sidebar-border: 215 20% 20%;
+    --sidebar-ring: 209 90% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@layer components {
+  .clinical-card {
+    @apply bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+  .clinical-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .clinical-input {
+    @apply w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent;
+  }
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@layer utilities {
+  .gradient-clinical {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(209 85% 45%) 100%);
+  }
+  .gradient-hero {
+    background: linear-gradient(160deg, hsl(var(--primary)) 0%, hsl(209 80% 28%) 60%, hsl(215 25% 15%) 100%);
+  }
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  }
+}
