@@ -1,17 +1,13 @@
 import { useState, useMemo } from "react";
-import { z } from "zod";
+
 import { Shield, Eye, EyeOff, LogIn, AlertTriangle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { sanitizeInput } from "@/lib/security";
 
-const loginSchema = z.object({
-  email: z.string().trim().email("Email inválido").max(255),
-  password: z.string().min(1, "Password obrigatória").max(128),
-});
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,33 +20,24 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
+  e.preventDefault();
+  setErrors({});
 
-    const result = loginSchema.safeParse({ email: sanitizeInput(email), password });
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      result.error.issues.forEach((err) => {
-        if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await login(result.data.email, result.data.password);
-      toast.success("Sessão iniciada com sucesso");
-      navigate("/dashboard");
-    } catch {
-      setAttempts((a) => a + 1);
-      // Generic message to prevent user enumeration (OWASP T06)
-      setErrors({ form: "Credenciais inválidas. Verifique o email e a password." });
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // VULNERABILIDADE: Removemos o sanitizeInput e o zod para deixar o payload passar
+  setLoading(true);
+  try {
+    // Enviamos o email e password "crus", tal como o utilizador os escreveu
+    await login(email, password); 
+    
+    toast.success("Sessão iniciada com sucesso");
+    navigate("/dashboard");
+  } catch (err) {
+    setAttempts((a) => a + 1);
+    setErrors({ form: "Credenciais inválidas." });
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left panel */}

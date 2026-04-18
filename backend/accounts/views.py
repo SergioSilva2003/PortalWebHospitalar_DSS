@@ -38,32 +38,41 @@ class HistoricoList(APIView):
 
 # 3. FUNÇÃO DE REGISTO (Segura e Normalizada)
 @api_view(['POST'])
-@csrf_exempt
 def registar_paciente(request):
+    nome = request.data.get('name') # ou 'nome', confirma o que envias no JSON
+    email = request.data.get('email')
+    password = request.data.get('password')
+
     try:
-        nome = request.data.get('name')
-        email = request.data.get('email')
-
-        if not nome or not email:
-            return Response({"error": "Nome e email são obrigatórios"}, status=400)
-
-        # Gera ID único para evitar erro de UNIQUE constraint
-        novo_id = f"usr_{uuid.uuid4().hex[:8]}"
-
-        # Uso do ORM para um registo estável
+        # Criamos o paciente SEM passar o ID. O SQLite atribui o 1, 2, 3...
         novo_paciente = Paciente.objects.create(
-            id=novo_id,
             nome=nome,
-            email=email
+            email=email,
+            password=password
         )
-
-        return Response({
-            "id": novo_paciente.id,
-            "name": novo_paciente.nome,
-            "email": novo_paciente.email,
-            "status": "sucesso"
-        }, status=201)
-        
+        return Response({"message": "Sucesso", "id": novo_paciente.id}, status=201)
     except Exception as e:
-        print(f"Erro no Registo: {e}")
         return Response({"error": str(e)}, status=400)
+
+@api_view(['POST'])
+
+def login_vulneravel(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    # O ERRO FATAL: Concatenação direta de strings na Query
+    query = f"SELECT id, nome, email FROM accounts_paciente WHERE email = '{email}' AND password = '{password}'"
+    
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        user = cursor.fetchone()
+
+    if user:
+        return Response({
+            "id": user[0],
+        "name": user[1],
+        "email": user[2], # Se o índice 2 for o email na tua query
+        "role": "patient"
+        }, status=200)
+    else:
+        return Response({"error": "Login falhou"}, status=401)

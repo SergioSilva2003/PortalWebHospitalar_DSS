@@ -27,24 +27,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [tokenExpiry, setTokenExpiry] = useState<number | null>(null);
 
-  const login = useCallback(async (email: string, _password: string) => {
-    // Simulate API call — replace with: POST /api/auth/login/
-    await new Promise((r) => setTimeout(r, 800));
-    const role: UserRole = email.includes("admin")
-      ? "admin"
-      : email.includes("doctor")
-      ? "doctor"
-      : "patient";
-    setUser({
-      id: "usr_" + Math.random().toString(36).slice(2, 10),
-      name: email.split("@")[0],
-      email,
-      role,
+  const login = useCallback(async (email: string, password: string) => {
+  try {
+    // 1. Chama o teu endpoint do Django
+    const response = await fetch("http://127.0.0.1:8000/api/login/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
-    setToken("mock_jwt_" + Date.now());
-    setTokenExpiry(Date.now() + 15 * 60 * 1000); // 15 min
-  }, []);
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      // Se o Django der 401 ou 404, o login falha aqui
+      throw new Error(data.error || "Falha no login");
+    }
+
+    // 2. SÓ SE O DJANGO DEVOLVER SUCESSO é que preenchemos o user
+    setUser({
+      id: data.id,
+      name: data.name,
+      email: data.email || email,
+      role: data.role || "patient",
+    });
+    
+    setToken("jwt_" + Math.random()); // Ou o token que o Django devolver
+    setTokenExpiry(Date.now() + 15 * 60 * 1000);
+
+  } catch (error: any) {
+    console.error("Erro no login:", error.message);
+    throw error; // Lança o erro para o LoginPage mostrar o aviso vermelho
+  }
+}, []);
   const register = useCallback(async (name: string, email: string, _password: string) => {
     await new Promise((r) => setTimeout(r, 800));
     setUser({ id: "usr_" + Math.random().toString(36).slice(2, 10), name, email, role: "patient" });
