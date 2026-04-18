@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+# Adiciona este import (ajusta 'hospital_api' se o nome da tua app for diferente)
+from accounts.views import PacienteDetail, HistoricoList, registar_paciente
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/pacientes/<str:pk>/', PacienteDetail.as_view()),
+    path('api/historico/', HistoricoList.as_view()),
+    path('api/registar/', registar_paciente)
+
 ]
